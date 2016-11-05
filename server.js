@@ -1,10 +1,9 @@
 const http = require('http');
 const fs = require('fs');
 const url = require('url');
-const crypto = require('crypto');
+const StreamConcat = require('stream-concat');
 
 const Transform = require('stream').Transform;
-const Reader = require('stream').Reader;
 
 const PORT = process.env.PORT || 3000;
 
@@ -19,17 +18,13 @@ const PORT = process.env.PORT || 3000;
 // }
 
 class T extends Transform {
-  constructor(res) {
+  constructor() {
     super();
-    this.res = res;
-
   }
 
   _transform(data, enc, next) {
-    console.log('chunk');
     setTimeout(() => {
       this.push(data);
-      // this.res.flush()
       next()
     }, 1000);
   }
@@ -37,8 +32,12 @@ class T extends Transform {
 
 function streamFile(res) {
   res.flushHeaders();
-  fs.createReadStream('./text/zeros.txt').pipe(new T(res)).pipe(res);
-  // fs.createReadStream('./text/ life_of_brian.txt').pipe(new T(res)).pipe(res);
+  let scripts = new StreamConcat([
+    fs.createReadStream('./text/holy_grail.txt'),
+    fs.createReadStream('./text/life_of_brian.txt'),
+    fs.createReadStream('./text/meaning_of_life.txt')
+  ])
+  scripts.pipe(new T(res)).pipe(res);
 }
 
 const server = http.createServer((req, res) => {
