@@ -11,7 +11,6 @@ function streamFile(res) {
 const server = http.createServer((req, res) => {
   const rurl = url.parse(req.url);
 
-  console.log(rurl);
   if (rurl.pathname == '/give-me-stuff-now') {
     streamFile(res);
   } else {
