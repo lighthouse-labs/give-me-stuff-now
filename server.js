@@ -26,16 +26,19 @@ class T extends Transform {
   }
 
   _transform(data, enc, next) {
+    console.log('chunk');
     setTimeout(() => {
       this.push(data);
-      this.res.flush()
+      // this.res.flush()
       next()
     }, 1000);
   }
 }
 
 function streamFile(res) {
-  fs.createReadStream('./text/life_of_brian.txt').pipe(new T(res)).pipe(res);
+  res.flushHeaders();
+  fs.createReadStream('./text/zeros.txt').pipe(new T(res)).pipe(res);
+  // fs.createReadStream('./text/ life_of_brian.txt').pipe(new T(res)).pipe(res);
 }
 
 const server = http.createServer((req, res) => {
